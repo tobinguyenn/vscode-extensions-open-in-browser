@@ -3,7 +3,7 @@
     "displayName": "open in browser",
     "description": "This allows you to open the current file in your default browser or application.",
     "icon": "images/icon.png",
-    "version": "3.1.0",
+    "version": "3.2.0",
     "publisher": "techer",
     "license": "MIT",
     "repository": "https://github.com/SudoKillMe/vscode-extensions-open-in-browser",
@@ -86,15 +86,46 @@
                     "items": {
                         "type": "object",
                         "additionalProperties": false,
-                        "required": ["displayName"],
+                        "required": [
+                            "displayName"
+                        ],
                         "properties": {
-                            "displayName": { "type": "string", "minLength": 1, "pattern": "\\S" },
-                            "name": { "type": "string", "minLength": 1, "pattern": "\\S" },
-                            "path": { "type": "string", "minLength": 1 }
+                            "displayName": {
+                                "type": "string",
+                                "minLength": 1,
+                                "pattern": "\\S"
+                            },
+                            "name": {
+                                "type": "string",
+                                "minLength": 1,
+                                "pattern": "\\S"
+                            },
+                            "path": {
+                                "type": "string",
+                                "minLength": 1
+                            }
                         },
                         "oneOf": [
-                            { "required": ["name"], "not": { "required": ["path"] } },
-                            { "required": ["path"], "not": { "required": ["name"] } }
+                            {
+                                "required": [
+                                    "name"
+                                ],
+                                "not": {
+                                    "required": [
+                                        "path"
+                                    ]
+                                }
+                            },
+                            {
+                                "required": [
+                                    "path"
+                                ],
+                                "not": {
+                                    "required": [
+                                        "name"
+                                    ]
+                                }
+                            }
                         ]
                     }
                 },
@@ -134,7 +165,7 @@
                     "group": "open-in-browser"
                 },
                 {
-                    "when": "resourceScheme == file && explorerResourceIsFolder != true",
+                    "when": "resourceScheme == file && explorerResourceIsFolder != true || resourceScheme == vscode-remote && remoteName == wsl && explorerResourceIsFolder != true",
                     "command": "extension.openInDefaultBrowser",
                     "group": "open-in-browser"
                 },
@@ -151,7 +182,7 @@
                     "group": "open-in-browser"
                 },
                 {
-                    "when": "resourceScheme == file && explorerResourceIsFolder != true",
+                    "when": "resourceScheme == file && explorerResourceIsFolder != true || resourceScheme == vscode-remote && remoteName == wsl && explorerResourceIsFolder != true",
                     "command": "extension.openInDefaultBrowser",
                     "group": "open-in-browser"
                 },
@@ -168,7 +199,7 @@
                     "group": "open-in-browser"
                 },
                 {
-                    "when": "resourceScheme == file && explorerResourceIsFolder != true",
+                    "when": "resourceScheme == file && explorerResourceIsFolder != true || resourceScheme == vscode-remote && remoteName == wsl && explorerResourceIsFolder != true",
                     "command": "extension.openInDefaultBrowser",
                     "group": "open-in-browser"
                 },

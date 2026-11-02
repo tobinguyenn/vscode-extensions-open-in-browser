@@ -1,10 +1,13 @@
 import { QuickPickItem } from "vscode";
+import { isWsl } from './wsl';
 
 interface PickItem extends QuickPickItem {
   [propName: string]: any;
 }
 
-const platform = process.platform;
+// In WSL the browser runs on the Windows host, so use Windows browser names.
+const wsl = isWsl(process.platform, process.env);
+const platform = wsl ? 'win32' : process.platform;
 
 const chromeItem: PickItem = {
   description: "Windows, Mac, Linux",
@@ -92,7 +95,10 @@ const braveItem: PickItem = {
 
 const browsers = [chromeItem, firefoxItem, operaItem, braveItem];
 
-if (process.platform === 'win32') {
+if (wsl) {
+  // Canary's path depends on LOCALAPPDATA, which WSL does not provide.
+  browsers.push(edgeItem);
+} else if (process.platform === 'win32') {
   browsers.push(canaryItem);
   browsers.push(ieItem);
   browsers.push(edgeItem);

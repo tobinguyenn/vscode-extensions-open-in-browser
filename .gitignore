@@ -3,5 +3,3 @@ node_modules
 !.vscode/extensions.json
 !.vscode/launch.json
 !.vscode/tasks.json
-open-in-browser*
-*.vsix

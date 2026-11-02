@@ -33,7 +33,7 @@ These commands are available in the Command Palette. Shortcuts and Command Palet
 
 Commands appear in the Explorer, editor, and editor-tab context menus:
 
-- **Open In Default Browser** is available for local files of any type. Its menu entry excludes folders, unsaved documents, and remote resources.
+- **Open In Default Browser** is available for local files of any type. Its menu entry excludes folders, unsaved documents, and remote resources other than WSL.
 - **Open In Other Browsers** appears for resources whose language mode is HTML.
 - **Open in Browser - Serve Mode** appears for saved local files in trusted workspaces. It is unavailable in remote workspaces.
 
@@ -275,7 +275,8 @@ Remove private information from paths and logs before sharing them.
 
 - **Direct open and lightweight Serve Mode.** Direct-open commands use file paths. Serve Mode provides localhost HTTP for static files; it does not map files to an existing development server, provide live reload, or run backend code. Use a dedicated server for more complex needs.
 - **Saved content only.** Unsaved-document preview is not supported; save edits before opening the file.
-- **Local Serve Mode only.** Serve Mode is disabled in SSH, containers, WSL, and other remote workspaces. Direct-open commands do not automatically make remote files accessible to a local browser.
+- **Local Serve Mode only.** Serve Mode is disabled in SSH, containers, WSL, and other remote workspaces. Direct-open commands do not automatically make remote files accessible to a local browser, except in WSL.
+- **WSL opens the Windows browser.** In a WSL window, direct-open commands launch the browser on the Windows host and pass a `wsl.localhost` path (or the Windows drive path for files under `/mnt/<drive>/`). VS Code runs this extension on the Windows side by default; the `vscode-remote://wsl+<distro>/...` resource is converted the same way, so no `remote.extensionKind` setting is needed. This requires WSL interop; `powershell.exe` is taken from the WSL `PATH`, falling back to `/mnt/c/Windows/System32/WindowsPowerShell/v1.0/powershell.exe`. Windows must support `\\wsl.localhost` paths (Windows 11, or Windows 10 with the Microsoft Store version of WSL).
 - **Verification is platform-specific.** Automated tests cover mappings, parameters, and menu declarations; a macOS test application exercises LaunchServices. Windows/Linux browser launches, VS Code menu behavior, and Insiders installation still need desktop validation. The reported Ubuntu 24.04 default-browser failure has not been confirmed fixed.
 
 ## How launching works
@@ -285,6 +286,7 @@ Remove private information from paths and logs before sharing them.
 | Windows | Windows PowerShell `Start-Process`, with literal paths and individually quoted arguments. Explicitly selected browsers receive an encoded file URI. |
 | macOS | `/usr/bin/open` for application names and `.app` paths, without waiting for the browser to exit. Absolute executable paths are launched directly. |
 | Linux | `opn`, using the selected browser command or its bundled `xdg-open` script for the system default application. |
+| WSL | Windows PowerShell `Start-Process` through WSL interop (`powershell.exe`), with Windows browser names. Linux paths become `\\wsl.localhost\<distro>\...` for the default application, or `file://wsl.localhost/<distro>/...` for a selected browser; files under `/mnt/<drive>/` use the Windows drive path. |
 
 ## Development
 

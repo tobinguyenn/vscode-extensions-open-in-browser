@@ -1,10 +1,26 @@
 import { open, defaultBrowser, standardizedBrowserName, browserItems } from './util';
 import * as vscode from 'vscode';
+import { toWindowsPath } from './wsl';
 
 function currentPageUri () {
   return vscode.window.activeTextEditor
       && vscode.window.activeTextEditor.document
       && vscode.window.activeTextEditor.document.uri;
+}
+
+const WSL_AUTHORITY = /^wsl\+(.+)$/i;
+
+/**
+ * Path the browser host can open. VS Code's product.json runs this extension on
+ * the UI (Windows) side, so in a WSL window resources arrive as
+ * vscode-remote://wsl+<distro>/... and fsPath alone loses the distro.
+ */
+function localPath (uri: any): string | undefined {
+  if (!uri) {
+    return undefined;
+  }
+  const wsl = uri.scheme === 'vscode-remote' && WSL_AUTHORITY.exec(uri.authority || '');
+  return wsl ? toWindowsPath(uri.path, wsl[1]) : uri.fsPath;
 }
 
 /** 
@@ -14,13 +30,7 @@ function currentPageUri () {
  * else the system default browser will work.
  */
 export const openDefault = (path: any): void => {
-  let uri;
-  if (path) {
-    uri = path.fsPath;
-  } else {
-    const _path = currentPageUri();
-    uri = _path && _path.fsPath;
-  }
+  const uri = localPath(path || currentPageUri());
   const browser = standardizedBrowserName(defaultBrowser());
   open(uri, browser);
 };
@@ -35,13 +45,7 @@ export const openBySpecify = (path: any): void => {
     if (!item) {
       return;
     }
-    let uri;
-    if (path) {
-      uri = path.fsPath;
-    } else {
-      const _path = currentPageUri();
-      uri = _path && _path.fsPath;
-    }
+    const uri = localPath(path || currentPageUri());
     open(uri, item.standardName);
   });
 };
