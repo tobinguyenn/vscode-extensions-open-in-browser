@@ -6,13 +6,12 @@ const child_process_1 = require("child_process");
 // Windows command-line parser before passing the complete string as one value.
 const quoteArgument = (value) => '"' + value.replace(/(\\*)"/g, '$1$1\\"').replace(/(\\+)$/g, '$1$1') + '"';
 const literal = (value) => "'" + value.replace(/'/g, "''") + "'";
-const openWindows = (target, browser, args = []) => {
+const openWindows = (target, browser, args = [], executable = (process.env.SystemRoot || 'C:\\Windows') +
+    '\\System32\\WindowsPowerShell\\v1.0\\powershell.exe') => {
     let script = "$ErrorActionPreference = 'Stop'; Start-Process -FilePath " + literal(browser || target);
     if (browser) {
         script += ' -ArgumentList ' + literal(args.concat(target).map(quoteArgument).join(' '));
     }
-    const executable = (process.env.SystemRoot || 'C:\\Windows') +
-        '\\System32\\WindowsPowerShell\\v1.0\\powershell.exe';
     return new Promise((resolve, reject) => {
         const child = (0, child_process_1.spawn)(executable, ['-NoLogo', '-NoProfile', '-NonInteractive',
             '-EncodedCommand', Buffer.from(script, 'utf16le').toString('base64')]);

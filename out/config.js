@@ -1,6 +1,9 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
-const platform = process.platform;
+const wsl_1 = require("./wsl");
+// In WSL the browser runs on the Windows host, so use Windows browser names.
+const wsl = (0, wsl_1.isWsl)(process.platform, process.env);
+const platform = wsl ? 'win32' : process.platform;
 const chromeItem = {
     description: "Windows, Mac, Linux",
     detail: "A fast, secure, and free web browser built for the modern web",
@@ -77,7 +80,11 @@ const braveItem = {
     acceptName: ['brave', 'brave browser', 'brave-browser']
 };
 const browsers = [chromeItem, firefoxItem, operaItem, braveItem];
-if (process.platform === 'win32') {
+if (wsl) {
+    // Canary's path depends on LOCALAPPDATA, which WSL does not provide.
+    browsers.push(edgeItem);
+}
+else if (process.platform === 'win32') {
     browsers.push(canaryItem);
     browsers.push(ieItem);
     browsers.push(edgeItem);

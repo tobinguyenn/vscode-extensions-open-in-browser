@@ -1,5 +1,11 @@
 # Change Log
 
+## [3.2.0]
+
+### Added
+- Support WSL: in a WSL window, **Open In Default Browser** and **Open In Other Browsers** open the file in the Windows browser using a `\\wsl.localhost\<distro>\...` path or `file://wsl.localhost/<distro>/...` URL; files under `/mnt/<drive>/` use the Windows drive path. Works whether VS Code runs the extension on the Windows side (default) or inside WSL (`remote.extensionKind`), with Windows browser names and `powershell.exe` interop.
+- Show **Open In Default Browser** in the context menus for WSL resources.
+
 ## [3.1.0]
 
 ### Added
